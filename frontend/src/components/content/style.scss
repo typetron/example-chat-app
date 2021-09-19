@@ -1,0 +1,176 @@
+.content {
+	flex: 1;
+	height: 100%;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+
+	.room-icon {
+		margin-left: 12px;
+	}
+
+	.member-to-invite {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.contact-profile {
+		height: 60px;
+		background: #f5f5f5;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+
+		.contact-profile-details {
+			display: flex;
+			align-items: center;
+
+			p {
+				margin: 0;
+			}
+
+			.avatar {
+				margin: 0 12px;
+			}
+		}
+
+		//img {
+		//	width: 40px;
+		//	border-radius: 50%;
+		//	margin: 12px;
+		//}
+	}
+
+	.messages {
+		flex: 1;
+		overflow-y: scroll;
+		overflow-x: hidden;
+
+		&::-webkit-scrollbar {
+			width: 8px;
+			background: transparent;
+		}
+
+		&::-webkit-scrollbar-thumb {
+			background-color: rgba(0, 0, 0, 0.3);
+		}
+
+		ul {
+			padding: 0;
+
+			li {
+				display: flex;
+				margin: 15px 15px 5px 15px;
+				font-size: 0.9em;
+
+				&:nth-last-child(1) {
+					margin-bottom: 20px;
+				}
+
+				.message-content {
+					div {
+						margin-bottom: 5px;
+					}
+				}
+
+				div.avatar {
+					margin: 0 8px 8px;
+					align-self: flex-start;
+				}
+
+				p {
+					display: inline-block;
+					padding: 10px 15px;
+					border-radius: 2px;
+					max-width: 205px;
+					line-height: 130%;
+					box-shadow: 0 0 10px -5px black;
+					word-break: break-word;
+					margin: 0;
+				}
+
+				i {
+					opacity: 0.5;
+				}
+			}
+
+			li.sent {
+				justify-content: flex-end;
+
+				p {
+					background: #435f7a;
+					color: #f5f5f5;
+				}
+			}
+
+			li.replies {
+				p {
+					background: #f5f5f5;
+				}
+			}
+		}
+	}
+
+	.message-input {
+		display: flex;
+		padding: 0 12px 12px;
+
+		input {
+			font-family: "proxima-nova", "Source Sans Pro", sans-serif;
+			border: none;
+			width: calc(100% - 90px);
+			padding: 11px 32px 10px 8px;
+			font-size: 0.8em;
+			color: #32465a;
+			flex: 1;
+
+			&:focus {
+				outline: none;
+			}
+		}
+
+		.attachment {
+			&:hover {
+				opacity: 1;
+			}
+		}
+
+
+	}
+}
+
+@media screen and (max-width: 735px) {
+	.content {
+		width: calc(100% - 58px);
+		min-width: 300px !important;
+
+		.messages {
+			max-height: calc(100% - 105px);
+		}
+
+		.message-input {
+			input {
+				padding: 15px 32px 16px 8px;
+			}
+
+			button {
+				padding: 16px 0;
+			}
+		}
+	}
+}
+
+@media screen and (min-width: 735px) {
+	.content {
+		.messages {
+			ul {
+				li {
+					p {
+						max-width: 300px;
+					}
+				}
+			}
+		}
+	}
+}

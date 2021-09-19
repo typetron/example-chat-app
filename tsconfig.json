@@ -1,0 +1,38 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "ES2018",
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"sourceMap": true,
+		"strict": true,
+		"esModuleInterop": true,
+		"strictPropertyInitialization": false,
+		"outDir": "dist",
+		"baseUrl": ".",
+		"moduleResolution": "node",
+		"lib": [
+			"esnext"
+		],
+		"types": [
+			"node",
+			"reflect-metadata"
+		],
+		"paths": {
+			"App/*": [
+				"*"
+			],
+			"@Typetron/*": [
+				"node_modules/@typetron/framework/*"
+			]
+		}
+	},
+	"include": [
+		"**/*.ts"
+	],
+	"exclude": [
+		"test",
+		"node_modules"
+	]
+}
+
