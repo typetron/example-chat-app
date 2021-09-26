@@ -10,7 +10,7 @@ import { Content } from './components/content'
 import { Sidebar } from './components/sidebar'
 import { Modal } from './components/modal'
 import { avatarStyle, serverAvatar, toBase64, displayErrors } from './utils'
-import { EventResponse } from '../../../typetron/Frontend/Websockets/dist/types'
+import { EventResponse } from '@typetron/Websockets/types'
 import { BackendError } from './models'
 
 const App = () => {

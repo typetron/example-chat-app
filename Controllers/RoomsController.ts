@@ -11,7 +11,7 @@ import { RoomForm } from 'App/Forms/RoomForm'
 import { Storage, fromBase64 } from '@Typetron/Storage'
 import { Inject } from '@Typetron/Container'
 import { WebSocket } from '@Typetron/Router/Websockets'
-import { WebsocketsProvider } from '../../typetron/Framework/Providers/WebsocketsProvider'
+import { WebsocketsProvider } from '@Typetron/Framework/Providers/WebsocketsProvider'
 
 @Controller('rooms')
 @Middleware(AuthMiddleware)
