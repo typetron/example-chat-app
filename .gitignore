@@ -2,6 +2,7 @@ dist
 node_modules
 .idea
 .nyc_output
+database.sqlite
 database-local.sqlite
 coverage
 .env
