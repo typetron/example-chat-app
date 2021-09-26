@@ -13,7 +13,7 @@ export class Room extends Model {
     avatar?: string
 
     @Field()
-    type: 'personal' | 'private' | 'public'
+    type: 'personal' | 'private' | 'public' | null
 
     @FieldMany(User)
     users: User[]

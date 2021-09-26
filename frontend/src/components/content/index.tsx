@@ -4,15 +4,12 @@ import { Message } from '../../../../Models/Message'
 import { Room } from '../../../../Models/Room'
 import { User } from '../../../../Models/User'
 import { SearchResult } from '../../../../Models/SearchResults'
-import { serverAvatar, toBase64, avatarStyle } from '../../utils'
+import { serverAvatar, avatarStyle } from '../../utils'
 import { SearchResultItem } from '../searchResultItem'
 import { socket } from '../../socket'
 import { Modal } from '../modal'
-
-interface RoomForm {
-    name: string
-    avatar?: string
-}
+import { RoomForm } from '../types'
+import { RoomFormModal } from '../roomForm'
 
 interface Props {
     room: Room
@@ -35,20 +32,10 @@ export const Content = (props: Props) => {
     const [searchForMember, setSearchForMember] = useState<string>('')
     const [searchResults, setSearchResults] = useState<SearchResult[]>([])
 
-    const [roomForm, setRoomForm] = useState<RoomForm>({
-        name: '',
-        avatar: undefined,
-    })
-
     useEffect(() => {
         socket.emit('rooms.messages', {
             parameters: [props.room.id],
         })
-
-        setRoomForm(value => ({
-            ...value,
-            name: props.room.name
-        }))
 
         scrollToBottom()
     }, [props.room])
@@ -87,8 +74,8 @@ export const Content = (props: Props) => {
         scrollToBottom()
     }
 
-    const updateRoom = async () => {
-        await props.onRoomUpdate(props.room.id, roomForm)
+    const updateRoom = async (id: number, form: RoomForm) => {
+        await props.onRoomUpdate(id, form)
         setShowSettingsModal(false)
     }
 
@@ -117,16 +104,6 @@ export const Content = (props: Props) => {
         }
     }
 
-    async function handleAvatarChange(event: ChangeEvent<HTMLInputElement>) {
-        const file = event.target.files?.[0]
-        if (!file) {
-            return
-        }
-
-        const avatar = await toBase64(file)
-        setRoomForm({...roomForm, avatar})
-    }
-
     function renderIcons() {
         return <>
             <i className="fa fa-pencil room-icon clickable" aria-hidden="true" onClick={() => setShowSettingsModal(true)}/>
@@ -135,57 +112,13 @@ export const Content = (props: Props) => {
         </>
     }
 
-    function renderSettingsModal() {
-        return <Modal
-            okButton="Save"
-            title="Settings"
-            visible={showSettingsModal}
-            onCancel={() => setShowSettingsModal(false)}
-            onOk={updateRoom}
-        >
-            <form>
-                <div className="form-group">
-                    <label>Name</label>
-                    <input type="text"
-                           className="full-width"
-                           value={roomForm.name ?? ''}
-                           onChange={(event: ChangeEvent<HTMLInputElement>) => setRoomForm({
-                               ...roomForm,
-                               name: event.target.value
-                           })}
-                    />
-                </div>
-
-                <div className="form-group">
-                    <label>Avatar</label>
-
-                    <div className="form-avatar">
-                        {
-                            props.room.avatar ? (
-                                <>
-                                    <div style={avatarStyle(serverAvatar(props.room.avatar))} className="avatar big"/>
-                                    <br/>
-                                </>
-                            ) : undefined
-                        }
-                        <input type="file"
-                               className="full-width"
-                               onChange={(event: ChangeEvent<HTMLInputElement>) => handleAvatarChange(event)}
-                        />
-                    </div>
-                </div>
-
-            </form>
-        </Modal>
-    }
-
     function renderMembersModal() {
         return <Modal
-            okButton="Save"
+            okButton="OK"
             title="Members"
             visible={showMembersModal}
             onCancel={() => setShowMembersModal(false)}
-            onOk={updateRoom}
+            onOk={() => {}}
         >
 
             <div className="form-group">
@@ -262,7 +195,15 @@ export const Content = (props: Props) => {
             </button>
         </div>
         {props.room.type !== 'personal'
-            ? <>{renderSettingsModal()} {renderMembersModal()}</>
+            ? <>
+                <RoomFormModal visible={showSettingsModal}
+                               onCancel={() => setShowSettingsModal(false)}
+                               onOk={() => {}}
+                               room={props.room}
+                               onSubmit={form => updateRoom(props.room.id, form)}
+                />
+                {renderMembersModal()}
+            </>
             : undefined}
     </>
 
