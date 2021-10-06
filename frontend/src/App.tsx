@@ -77,9 +77,9 @@ const App = () => {
 
     useEffect(() => {
         // have a variable that holds the rooms you are subscribed to
-        const subs: unknown[] = []
+        const subscriptions: ReturnType<ReturnType<(typeof socket)['on']>['subscribe']>[] = []
         rooms.forEach((room, index) => {
-            const a = socket.on<Message>(`rooms.${room.id}.message`).subscribe(message => {
+            const messageSub = socket.on<Message>(`rooms.${room.id}.message`).subscribe(message => {
                 setMessagesMap(state => {
                     return {
                         ...state,
@@ -95,7 +95,7 @@ const App = () => {
                 }
             })
 
-            const b = socket.on<Message[]>(`rooms.${room.id}.messages`).subscribe(value => {
+            const messagesSub = socket.on<Message[]>(`rooms.${room.id}.messages`).subscribe(value => {
                 setMessagesMap(state => {
                     return {
                         ...state,
@@ -104,22 +104,25 @@ const App = () => {
                 })
             })
 
-            subs.push(a, b)
+            subscriptions.push(messageSub, messagesSub)
+        })
+        const roomUpdateSub = socket.on<Message>(`rooms.update`).subscribe(() => {
+            socket.emit('rooms.browse')
         })
 
+        const roomRemoveSub = socket.on<Message>(`rooms.remove`).subscribe(() => {
+            socket.emit('rooms.browse')
+        })
+
+        subscriptions.push(roomUpdateSub, roomRemoveSub)
+
         return () => {
-            // this is called before next useEffect. This is used for cleanup.
-            // TODO do unsubscribe here
-            subs.forEach(s => {
-                // @ts-ignore
-                s.unsubscribe()
-            })
+            subscriptions.forEach(subscription => subscription.unsubscribe())
         }
     }, [rooms, user, selectedRoom])
 
     const onRoomUpdate = async (id: number, form: object) => {
         await socket.request<Room>('rooms.update', {parameters: [id], body: form})
-        socket.emit('rooms.browse')
     }
 
     const onRoomDelete = async (id: number) => {
@@ -136,6 +139,7 @@ const App = () => {
     const logout = () => {
         setUser(undefined)
         localStorage.removeItem('token')
+        socket.emit('logout')
     }
 
     const join1On1Room = async (userId: number) => {
@@ -155,7 +159,7 @@ const App = () => {
 
     const selectRoom = async (roomId: number) => {
         const roomIndex = rooms.findIndex(item => item.id === roomId)
-        if (roomIndex) {
+        if (roomIndex !== undefined) {
             const newRooms = [...rooms]
             newRooms[roomIndex].hasNewMessages = false
             setRooms(newRooms)

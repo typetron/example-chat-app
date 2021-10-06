@@ -8,6 +8,10 @@ export class RegisterForm extends Form {
     email: string
 
     @Field()
+    @Rules(Required)
+    name: string
+
+    @Field()
     @Rules(Required, MinLength(6))
     password: string
 

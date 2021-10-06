@@ -24,6 +24,7 @@ class AuthControllerTest extends TestCase {
         const response = await this.event<User>('register', {
             body: {
                 email: 'user@test.com',
+                name: 'tester',
                 password: 'password',
                 passwordConfirmation: 'password',
             }

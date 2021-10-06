@@ -106,7 +106,7 @@ export const Content = (props: Props) => {
 
     function renderIcons() {
         return <>
-            <i className="fa fa-pencil room-icon clickable" aria-hidden="true" onClick={() => setShowSettingsModal(true)}/>
+            <i className="fa fa-pencil-alt room-icon clickable" aria-hidden="true" onClick={() => setShowSettingsModal(true)}/>
             <i className="fa fa-users room-icon clickable" aria-hidden="true" onClick={() => setShowMembersModal(true)}/>
             <i className="fa fa-trash room-icon clickable" aria-hidden="true" onClick={() => props.onRoomDelete(props.room.id)}/>
         </>
@@ -187,9 +187,6 @@ export const Content = (props: Props) => {
         </div>
         <div className="message-input">
             <input type="text" placeholder="Write your message..." value={message} onChange={handleChange} onKeyDown={handleKeyDown}/>
-            <button className="submit">
-                <i className="fa fa-paperclip attachment" aria-hidden="true"/>
-            </button>
             <button className="submit" onClick={addMessage}>
                 <i className="fa fa-paper-plane" aria-hidden="true"/>
             </button>

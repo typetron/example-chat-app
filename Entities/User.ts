@@ -1,5 +1,6 @@
 import { Column, Options, HasMany, Relation, BelongsToMany } from '@Typetron/Database'
 import { User as Authenticatable } from '@Typetron/Framework/Auth'
+import { User as UserModel } from 'App/Models/User'
 import { Message } from 'App/Entities/Message'
 import { Room } from 'App/Entities/Room'
 
@@ -20,5 +21,5 @@ export class User extends Authenticatable {
     rooms: BelongsToMany<Room>
 
     @Column()
-    status: 'online' | 'offline' | 'busy' | 'away'
+    status: UserModel['status']
 }

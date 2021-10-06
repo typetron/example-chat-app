@@ -12,6 +12,7 @@ import { Storage, fromBase64 } from '@Typetron/Storage'
 import { Inject } from '@Typetron/Container'
 import { WebSocket } from '@Typetron/Router/Websockets'
 import { WebsocketsProvider } from '@Typetron/Framework/Providers/WebsocketsProvider'
+import { Notifier } from 'App/Services/Notifier'
 
 @Controller('rooms')
 @Middleware(AuthMiddleware)
@@ -25,6 +26,9 @@ export class RoomsController {
 
     @Inject()
     webSocketsProvider: WebsocketsProvider
+
+    @Inject()
+    notifier: Notifier
 
     @Event()
     async browse() {
@@ -87,6 +91,10 @@ export class RoomsController {
         await room.users.syncWithoutDetaching(this.user.id)
         await room.load('messages.user', 'users')
 
+        this.socket.subscribe(`rooms.${room.id}`)
+
+        this.notifier.notifyUsers(room.users.items)
+
         return RoomModel.from(room)
     }
 
@@ -99,6 +107,7 @@ export class RoomsController {
             room.avatar = file.name
         }
         await room.save()
+        this.socket.publish(`rooms.${room.id}`, 'rooms.update')
         return RoomModel.from(room)
     }
 
@@ -112,6 +121,7 @@ export class RoomsController {
     @Event()
     async remove(room: Room) {
         await room.delete()
+        this.socket.publishAndSend(`rooms.${room.id}`, 'rooms.remove', room.id)
     }
 
 }

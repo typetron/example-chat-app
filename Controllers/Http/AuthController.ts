@@ -7,6 +7,7 @@ import { Inject } from '@Typetron/Container'
 import { Auth } from '@Typetron/Framework/Auth'
 import { WebSocket } from '@Typetron/Router/Websockets'
 import { WebsocketsProvider } from '@Typetron/Framework/Providers/WebsocketsProvider'
+import { Notifier } from 'App/Services/Notifier'
 
 @Controller()
 export class AuthController {
@@ -20,6 +21,9 @@ export class AuthController {
     @Inject()
     webSocketsProvider: WebsocketsProvider
 
+    @Inject()
+    notifier: Notifier
+
     @Event()
     async register(form: RegisterForm) {
         const user = await User.where('email', form.email).first()
@@ -31,7 +35,10 @@ export class AuthController {
             throw new Error('Passwords don\'t match')
         }
 
-        return UserModel.from(this.auth.register(form.email, form.password))
+        const registeredUser = await this.auth.register<User>(form.email, form.password)
+        registeredUser.name = form.name
+        await registeredUser.save()
+        return UserModel.from(registeredUser)
     }
 
     @Event()
@@ -50,7 +57,15 @@ export class AuthController {
         return UserModel.from(user)
     }
 
+    @Event()
+    async logout() {
+        const user = await this.auth.user<User>()
+        await this.updateUserStatusAndNotifyFriends(user, 'offline')
+        this.socket.reset()
+    }
+
     async subscribeToGenericEvents(user: User) {
+        // this is used to notify the use that he was invited to a room
         this.socket.subscribe(`users.${user.id}`)
 
         const rooms = await user.rooms.get()
@@ -60,12 +75,22 @@ export class AuthController {
 
         this.socket.id = user.id
         this.webSocketsProvider.sockets.set(this.socket.id, this.socket)
+
+        await this.updateUserStatusAndNotifyFriends(user, 'online')
     }
 
     @OnClose
-    onClose() {
+    async onClose() {
         if (this.socket.id) {
             this.webSocketsProvider.sockets.delete(this.socket.id)
+            if (this.auth.id) {
+                await this.updateUserStatusAndNotifyFriends(await this.auth.user(), 'offline')
+            }
         }
+    }
+
+    private async updateUserStatusAndNotifyFriends(user: User, status: UserModel['status']) {
+        await user.save({status})
+        await this.notifier.notifyRooms(user)
     }
 }

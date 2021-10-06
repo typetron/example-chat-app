@@ -5,7 +5,7 @@ import type { User as UserEntity } from '../Entities/User'
 export class UserForm extends Form {
 
     @Field()
-    @Rules(Optional, MinLength(10))
+    @Rules(Optional, MinLength(3))
     name?: string
 
     @Field()
