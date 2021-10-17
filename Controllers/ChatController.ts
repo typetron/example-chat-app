@@ -11,18 +11,17 @@ export class ChatController {
     @Event()
     @Middleware(AuthMiddleware)
     async searchContacts(@Body() search: string, @AuthUser() user: User) {
-        const users = await User
-            .whereLike('name', `%${search}%`)
-            .where('id', '!=', user.id)
-            .get()
-        const rooms = await Room
-            .whereLike('name', `%${search}%`)
-            .where('type', `public`)
-            .get()
-        return SearchResults.from({
-            users,
-            rooms
-        })
+        const [users, rooms] = await Promise.all([
+            User
+                .whereLike('name', `%${search}%`)
+                .where('id', '!=', user.id)
+                .get(),
+            Room
+                .whereLike('name', `%${search}%`)
+                .where('type', `public`)
+                .get()
+        ])
+        return SearchResults.from({users, rooms})
     }
 }
 
