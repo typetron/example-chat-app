@@ -8,8 +8,8 @@
 $ npm install
 ```
 
-2.Rename the `.env.example` file into `.env` and add a secret key (just a random string) for the `APP_SECRET` variable
-inside this file
+2. Rename the `.env.example` file into `.env` and add a secret key (just a random string) for the `APP_SECRET` variable
+   inside this file
 
 3. Start the backend app:
 

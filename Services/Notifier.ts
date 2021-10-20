@@ -1,6 +1,6 @@
 import { User } from 'App/Entities/User'
-import { Inject } from '../../typetron/dist/Container'
-import { WebsocketsProvider } from '../../typetron/dist/Framework/Providers/WebsocketsProvider'
+import { WebsocketsProvider } from '@Typetron/Framework/Providers/WebsocketsProvider'
+import { Inject } from '@Typetron/Container'
 
 export class Notifier {
 

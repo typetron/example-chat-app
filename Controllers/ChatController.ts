@@ -1,4 +1,4 @@
-import { Controller, Event, Body, Middleware } from '@Typetron/Router'
+import { Controller, Event, Body, Middleware, Get } from '@Typetron/Router'
 import { Room } from 'App/Entities/Room'
 import { AuthUser } from '@Typetron/Framework/Auth'
 import { User } from 'App/Entities/User'
@@ -7,6 +7,11 @@ import { AuthMiddleware } from '@Typetron/Framework/Middleware'
 
 @Controller()
 export class ChatController {
+
+    @Get()
+    async home() {
+        return 'Welcome to Typetron WebSockets server!'
+    }
 
     @Event()
     @Middleware(AuthMiddleware)
