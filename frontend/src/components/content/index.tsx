@@ -118,7 +118,7 @@ export const Content = (props: Props) => {
             title="Members"
             visible={showMembersModal}
             onCancel={() => setShowMembersModal(false)}
-            onOk={() => {}}
+            onOk={() => setShowMembersModal(false)}
         >
 
             <div className="form-group">

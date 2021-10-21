@@ -202,17 +202,15 @@ const App = () => {
             onCancel={() => setShowCreateRoomModal(false)}
             onOk={() => onRoomCreate()}
         >
-            <form>
-                <div className="form-group">
-                    <label>Name</label>
-                    <input type="text"
-                           className="full-width"
-                           onChange={(event: ChangeEvent<HTMLInputElement>) => setRoomForm({
-                               name: event.target.value
-                           })}
-                    />
-                </div>
-            </form>
+            <div className="form-group">
+                <label>Name</label>
+                <input type="text"
+                       className="full-width"
+                       onChange={(event: ChangeEvent<HTMLInputElement>) => setRoomForm({
+                           name: event.target.value
+                       })}
+                />
+            </div>
         </Modal>
     }
 
