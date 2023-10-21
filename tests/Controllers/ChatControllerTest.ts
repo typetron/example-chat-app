@@ -9,7 +9,7 @@ export class ChatControllerTest extends TestCase {
     @test
     async searchesForContacts() {
         await this.actingAs(await this.createUser())
-        const response = await this.event<SearchResults>('searchContacts')
+        const response = await this.action<SearchResults>('searchContacts')
         expect(response.body.users).to.be.an('array')
         expect(response.body.rooms).to.be.an('array')
     }

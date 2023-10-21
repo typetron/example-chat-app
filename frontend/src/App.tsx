@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, ChangeEvent } from 'react'
+import { ChangeEvent, useCallback, useEffect, useState } from 'react'
 import './App.scss'
 import { User } from '../../Models/User'
 import { socket } from './socket'
@@ -9,9 +9,9 @@ import { Register } from './components/register'
 import { Content } from './components/content'
 import { Sidebar } from './components/sidebar'
 import { Modal } from './components/modal'
-import { avatarStyle, serverAvatar, toBase64, displayErrors } from './utils'
-import { EventResponse } from '@typetron/Websockets/types'
-import { BackendError } from './models'
+import { avatarStyle, displayErrors, serverAvatar, toBase64 } from './utils'
+import { BackendError } from './types.ts'
+import { ActionResponse } from '@typetron/framework/Router/Websockets'
 
 const App = () => {
 
@@ -44,9 +44,9 @@ const App = () => {
                 try {
                     const response = await socket.request<User>('loginByToken', {body: token})
                     setUser(response)
-                    setUserForm({name: response.name})
                     socket.emit('rooms.browse')
                 } catch (error) {
+                    console.log(error)
                     localStorage.removeItem('token')
                     setUser(undefined)
                 }
@@ -60,12 +60,10 @@ const App = () => {
         })
 
         socket.on<Room>('rooms.join').subscribe(room => {
-            setRooms(value => {
-                return [...value, room]
-            })
+            setRooms(value => [...value, room])
         })
 
-        socket.onError({except: ['loginByToken']}).subscribe((error: EventResponse<unknown>) => {
+        socket.onError({except: ['loginByToken']}).subscribe((error: ActionResponse<unknown>) => {
             const message = error.message as BackendError
             if (typeof message !== 'string' && message.message === 'Unauthenticated') {
                 logout()
@@ -206,6 +204,7 @@ const App = () => {
                 <label>Name</label>
                 <input type="text"
                        className="full-width"
+                       value={roomForm.name}
                        onChange={(event: ChangeEvent<HTMLInputElement>) => setRoomForm({
                            name: event.target.value
                        })}
@@ -283,7 +282,13 @@ const App = () => {
                 joinRoom={joinRoom}
                 onStatusChange={setStatus}
                 join1On1Room={join1On1Room}
-                onShowSettings={() => setShowSettingsModal(true)}
+                onShowSettings={() => {
+                    setUserForm({
+                        name: user?.name ?? '',
+                        avatar: user?.avatar,
+                    })
+                    setShowSettingsModal(true)
+                }}
                 onShowCreateRoom={() => setShowCreateRoomModal(true)}
             />
 

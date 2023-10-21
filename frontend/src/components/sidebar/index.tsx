@@ -1,4 +1,4 @@
-import React, { useState, useCallback, ChangeEvent, useEffect } from 'react'
+import { ChangeEvent, useCallback, useEffect, useState } from 'react'
 import { ChatRoom } from '../chatRoom'
 import './style.scss'
 import { Room } from '../../../../Models/Room'
@@ -126,7 +126,10 @@ export const Sidebar = (props: Props) => {
                             }}/>
                         )
                 }
+
             </ul>
+            {!search && !props.rooms.length ?
+                <div style={{textAlign: 'center'}}><i> Search some rooms to find friends</i></div> : undefined}
         </div>
         <div id="bottom-bar">
             {/*<button id="addcontact">*/}

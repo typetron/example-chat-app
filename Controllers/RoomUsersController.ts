@@ -1,4 +1,4 @@
-import { Controller, Event, Body, Middleware } from '@Typetron/Router'
+import { Action, Body, Controller, Middleware } from '@Typetron/Router'
 import { Room } from 'App/Entities/Room'
 import { AuthUser } from '@Typetron/Framework/Auth'
 import { User } from 'App/Entities/User'
@@ -16,7 +16,7 @@ export class RoomUsersController {
     @Inject()
     websocketsProvider: WebsocketsProvider
 
-    @Event()
+    @Action()
     async invite(room: Room, @Body() user: number) {
         await room.users.add(user)
         const invitedUserSocket = this.websocketsProvider.sockets.get(user)
@@ -24,7 +24,7 @@ export class RoomUsersController {
         invitedUserSocket?.send('rooms.update')
     }
 
-    @Event()
+    @Action()
     async remove(room: Room, @Body() user: number) {
         await room.users.remove(user)
         const removedUserSocket = this.websocketsProvider.sockets.get(user)

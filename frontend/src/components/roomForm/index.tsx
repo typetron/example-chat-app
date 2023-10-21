@@ -1,5 +1,5 @@
-import React, { ChangeEvent, useState, useEffect } from 'react'
-import { serverAvatar, toBase64, avatarStyle } from '../../utils'
+import { ChangeEvent, useEffect, useState } from 'react'
+import { avatarStyle, serverAvatar, toBase64 } from '../../utils'
 import { Modal } from '../modal'
 import { RoomForm } from '../types'
 import { Room } from '../../../../Models/Room'

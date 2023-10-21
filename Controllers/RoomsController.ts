@@ -1,4 +1,4 @@
-import { Controller, Event, Body, Middleware } from '@Typetron/Router'
+import { Action, Body, Controller, Middleware } from '@Typetron/Router'
 import { MessageForm } from 'App/Forms/MessageForm'
 import { Room as RoomModel } from 'App/Models/Room'
 import { Message as MessageModel } from 'App/Models/Message'
@@ -8,7 +8,7 @@ import { User } from 'App/Entities/User'
 import { AuthMiddleware } from '@Typetron/Framework/Middleware'
 import { SearchResult } from 'App/Models/SearchResults'
 import { RoomForm } from 'App/Forms/RoomForm'
-import { Storage, fromBase64 } from '@Typetron/Storage'
+import { fromBase64, Storage } from '@Typetron/Storage'
 import { Inject } from '@Typetron/Container'
 import { WebSocket } from '@Typetron/Router/Websockets'
 import { WebsocketsProvider } from '@Typetron/Framework/Providers/WebsocketsProvider'
@@ -30,19 +30,19 @@ export class RoomsController {
     @Inject()
     notifier: Notifier
 
-    @Event()
+    @Action()
     async browse() {
         await this.user.load('rooms.users', 'rooms.messages')
         return RoomModel.from(this.user.rooms)
     }
 
-    @Event()
+    @Action()
     async messages(room: Room) {
         await room.load('messages.user')
         this.socket.send(`rooms.${room.id}.messages`, MessageModel.from(room.messages))
     }
 
-    @Event()
+    @Action()
     async message(room: Room, form: MessageForm) {
         const message = await room.messages.save({
             content: form.content,
@@ -51,7 +51,7 @@ export class RoomsController {
         this.socket.publishAndSend(`rooms.${room.id}`, `rooms.${room.id}.message`, MessageModel.from(message))
     }
 
-    @Event()
+    @Action()
     async usersToInvite(room: Room, @Body() search: string) {
         const users = await User
             .whereLike('name', `%${search}%`)
@@ -62,7 +62,7 @@ export class RoomsController {
         return SearchResult.from(users)
     }
 
-    @Event()
+    @Action()
     async open1To1(@Body() userId: number) {
         let room = await Room.with(['users', query => query.whereIn('userId', [userId, this.user.id])])
             .where('type', 'personal')
@@ -86,7 +86,7 @@ export class RoomsController {
         return RoomModel.from(room)
     }
 
-    @Event()
+    @Action()
     async join(room: Room) {
         await room.users.syncWithoutDetaching(this.user.id)
         await room.load('messages.user', 'users')
@@ -98,7 +98,7 @@ export class RoomsController {
         return RoomModel.from(room)
     }
 
-    @Event()
+    @Action()
     async update(room: Room, form: RoomForm, storage: Storage) {
         room.fill(form)
         if (form.avatar) {
@@ -111,14 +111,15 @@ export class RoomsController {
         return RoomModel.from(room)
     }
 
-    @Event()
+    @Action()
     async add(form: RoomForm) {
         const room = await Room.create(form)
+        this.socket.subscribe(`rooms.${room.id}`)
         await this.user.rooms.add(room)
         return RoomModel.from(room)
     }
 
-    @Event()
+    @Action()
     async remove(room: Room) {
         await room.delete()
         this.socket.publishAndSend(`rooms.${room.id}`, 'rooms.remove', room.id)

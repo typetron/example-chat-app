@@ -1,4 +1,4 @@
-import { Controller, Event, Body, OnClose } from '@Typetron/Router'
+import { Action, Body, Controller, OnClose } from '@Typetron/Router'
 import { RegisterForm } from 'App/Forms/RegisterForm'
 import { User } from 'App/Entities/User'
 import { User as UserModel } from 'App/Models/User'
@@ -24,7 +24,7 @@ export class AuthController {
     @Inject()
     notifier: Notifier
 
-    @Event()
+    @Action()
     async register(form: RegisterForm) {
         const user = await User.where('email', form.email).first()
         if (user) {
@@ -41,7 +41,7 @@ export class AuthController {
         return UserModel.from(registeredUser)
     }
 
-    @Event()
+    @Action()
     async login(form: LoginForm) {
         const token = await this.auth.login(form.email, form.password)
         const user = await this.auth.user<User>()
@@ -49,7 +49,7 @@ export class AuthController {
         return {token, user}
     }
 
-    @Event()
+    @Action()
     async loginByToken(@Body() token: string) {
         await this.auth.verify(token)
         const user = await this.auth.user<User>()
@@ -57,7 +57,7 @@ export class AuthController {
         return UserModel.from(user)
     }
 
-    @Event()
+    @Action()
     async logout() {
         const user = await this.auth.user<User>()
         await this.updateUserStatusAndNotifyFriends(user, 'offline')
@@ -65,7 +65,7 @@ export class AuthController {
     }
 
     async subscribeToGenericEvents(user: User) {
-        // this is used to notify the use that he was invited to a room
+        // this is used to notify the user that he was invited to a room
         this.socket.subscribe(`users.${user.id}`)
 
         const rooms = await user.rooms.get()

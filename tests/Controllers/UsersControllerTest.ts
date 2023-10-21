@@ -10,7 +10,7 @@ export class UsersControllerTest extends TestCase {
     async updatesUser() {
         const user = await this.createUser()
         await this.actingAs(user)
-        const response = await this.event<User>('users.update', {
+        const response = await this.action<User>('users.update', {
             body: {
                 status: 'offline'
             }

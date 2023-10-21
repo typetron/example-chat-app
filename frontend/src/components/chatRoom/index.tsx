@@ -1,5 +1,4 @@
-import React from 'react'
-import { serverAvatar, avatarStyle } from '../../utils'
+import { avatarStyle, serverAvatar } from '../../utils'
 import { User } from '../../../../Models/User'
 import { Room } from '../../../../Models/Room'
 

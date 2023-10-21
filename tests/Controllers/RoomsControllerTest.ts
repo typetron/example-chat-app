@@ -26,7 +26,7 @@ export class RoomsControllerTest extends TestCase {
             expect(response.content).to.be.equal('content')
         })
 
-        await this.event('rooms.message', {
+        await this.action('rooms.message', {
             parameters: [room.id],
             body: {
                 content: 'content'
@@ -38,7 +38,7 @@ export class RoomsControllerTest extends TestCase {
     async invitesUserToRoom() {
         const room = await Room.create()
         const someOtherUser = await this.createUser()
-        await this.event('room.users.invite', {
+        await this.action('room.users.invite', {
             parameters: [room.id],
             body: someOtherUser.id
         })
@@ -54,7 +54,7 @@ export class RoomsControllerTest extends TestCase {
         const someOtherUser = await this.createUser()
         await room.users.add(someOtherUser)
         expect(room.users.length).to.be.equal(1)
-        await this.event('room.users.remove', {
+        await this.action('room.users.remove', {
             parameters: [room.id],
             body: someOtherUser.id
         })
@@ -70,7 +70,7 @@ export class RoomsControllerTest extends TestCase {
         const room2 = await Room.create()
         await this.user.rooms.add(room1, room2)
 
-        const response = await this.event<RoomModel[]>('rooms.browse')
+        const response = await this.action<RoomModel[]>('rooms.browse')
 
         expect(response.body.length).to.be.equal(2)
     }
@@ -89,14 +89,14 @@ export class RoomsControllerTest extends TestCase {
             expect(response[0].content).to.be.equal('content')
         })
 
-        await this.event('rooms.messages', {
+        await this.action('rooms.messages', {
             parameters: [room.id]
         })
     }
 
     @test
     async createsRoom() {
-        const response = await this.event<RoomModel>('rooms.add', {
+        const response = await this.action<RoomModel>('rooms.add', {
             body: {
                 name: 'new room'
             }
@@ -116,7 +116,7 @@ export class RoomsControllerTest extends TestCase {
     async removesRoom() {
         const room = await Room.create()
 
-        await this.event('rooms.remove', {
+        await this.action('rooms.remove', {
             parameters: [room.id]
         })
 
@@ -137,7 +137,7 @@ export class RoomsControllerTest extends TestCase {
         const r = await Room.findOrFail(room.id)
         await r.load('users')
 
-        const response = await this.event<SearchResult[]>('rooms.usersToInvite', {
+        const response = await this.action<SearchResult[]>('rooms.usersToInvite', {
             parameters: [room.id],
             body: userNotInRom.name
         })
@@ -150,7 +150,7 @@ export class RoomsControllerTest extends TestCase {
     async openAn1On1Room() {
         const friend = await this.createUser({name: 'John'})
 
-        const response = await this.event<RoomModel>('rooms.open1To1', {
+        const response = await this.action<RoomModel>('rooms.open1To1', {
             body: friend.id
         })
 
@@ -162,7 +162,7 @@ export class RoomsControllerTest extends TestCase {
     async joinsRoom() {
         const room = await Room.create()
 
-        const response = await this.event<RoomModel>('rooms.join', {
+        const response = await this.action<RoomModel>('rooms.join', {
             parameters: [room.id],
         })
 
@@ -175,7 +175,7 @@ export class RoomsControllerTest extends TestCase {
     async updatesRoom() {
         const room = await Room.create()
 
-        const response = await this.event<RoomModel>('rooms.update', {
+        const response = await this.action<RoomModel>('rooms.update', {
             parameters: [room.id],
             body: {
                 name: 'test room'

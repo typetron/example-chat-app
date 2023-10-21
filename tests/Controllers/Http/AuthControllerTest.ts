@@ -10,7 +10,7 @@ class AuthControllerTest extends TestCase {
     @test
     async login() {
         const user = await this.createUser({password: 'password'})
-        const response = await this.event('login', {
+        const response = await this.action('login', {
             body: {
                 email: user.email,
                 password: 'password'
@@ -21,7 +21,7 @@ class AuthControllerTest extends TestCase {
 
     @test
     async register() {
-        const response = await this.event<User>('register', {
+        const response = await this.action<User>('register', {
             body: {
                 email: 'user@test.com',
                 name: 'tester',

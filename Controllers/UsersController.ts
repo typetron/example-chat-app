@@ -1,9 +1,9 @@
-import { Controller, Event, Middleware } from '@Typetron/Router'
+import { Action, Controller, Middleware } from '@Typetron/Router'
 import { AuthUser } from '@Typetron/Framework/Auth'
 import { User } from 'App/Entities/User'
 import { User as UserModel } from 'App/Models/User'
 import { UserForm } from 'App/Forms/UserForm'
-import { Storage, fromBase64 } from '@Typetron/Storage'
+import { fromBase64, Storage } from '@Typetron/Storage'
 import { AuthMiddleware } from '@Typetron/Framework/Middleware'
 import { Inject } from '@Typetron/Container'
 import { WebSocket } from '@Typetron/Router/Websockets'
@@ -22,7 +22,7 @@ export class UsersController {
     @Inject()
     notifier: Notifier
 
-    @Event()
+    @Action()
     async update(form: UserForm, storage: Storage) {
         this.user.fill(form)
         if (form.avatar) {

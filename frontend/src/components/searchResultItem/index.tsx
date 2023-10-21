@@ -1,4 +1,4 @@
-import React, { MouseEventHandler } from 'react'
+import { MouseEventHandler } from 'react'
 import './style.scss'
 import { avatarStyle, serverAvatar } from '../../utils'
 import { SearchResult } from '../../../../Models/SearchResults'
