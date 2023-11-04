@@ -7,9 +7,13 @@ export default new AppConfig({
     websocketsPort: 8001,
     server: 'uNetworking',
     environment: 'development',
-    middleware: [
-        // CorsMiddleware
-    ],
+    middleware: {
+        global: [],
+        http: [
+            // CorsMiddleware
+        ],
+        websocket: [],
+    },
     providers: [
         AppProvider,
         RoutingProvider,

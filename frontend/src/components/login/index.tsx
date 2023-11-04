@@ -1,4 +1,4 @@
-import { FormEvent, useState, useCallback } from 'react'
+import { FormEvent, useCallback, useState } from 'react'
 import { socket } from '../../socket'
 import { User } from '../../../../Models/User'
 
@@ -34,7 +34,7 @@ export const Login = ({
 
             <div className="form-group">
                 <label><i className="fa fa-user"/></label>
-                <input type="text" placeholder="Email" onChange={(event) => setEmail(event.target.value)}/>
+                <input type="email" placeholder="Email" onChange={(event) => setEmail(event.target.value)}/>
             </div>
 
             <div className="form-group">

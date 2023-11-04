@@ -18,7 +18,7 @@
 	},
 	"dependencies": {
 		"@types/dotenv": "^8.2.0",
-		"@typetron/framework": "^0.4.0-rc9",
+		"@typetron/framework": "^0.4.0-rc10",
 		"dotenv": "^8.6.0",
 		"reflect-metadata": "^0.1.13",
 		"ts-node": "^9.1.1",
